@@ -15,10 +15,13 @@ function Pipe() {
 function Caret() {
   return <Text>{'-'}</Text>;
 }
-type Circle = 'o'
-type Cross = 'x'
-type Empty = ' '
-type Symbol = Circle | Cross | Empty
+
+type Status = 'o_gagne' | 'x_gagne' | 'pas-fini' | 'plein'
+
+const Circle = 'o'
+const Cross = 'x'
+const Empty = ' '
+type Symbol = typeof Circle | typeof Cross | typeof Empty
 type GridProps = { tab: Symbol[][], onPress(x: number, y: number): void }
 function Grid(props: GridProps) {
   return (
@@ -66,20 +69,29 @@ function Grid(props: GridProps) {
 
 export default function App() {
   const [tab, setTab]  = useState<Symbol[][]>([
-    [' ', ' ', ' '],
-    [' ', ' ', ' '],
-    [' ', ' ', ' ']
+    [Empty, Empty, Empty],
+    [Empty, Empty, Empty],
+    [Empty, Empty, Empty]
   ]);
+
+  const [gamer, setGamer] = useState<typeof Cross | typeof Circle>(Cross)
 
   const onPress = (x: number, y: number) => {
     const copyTab = tab;
-    copyTab[x][y] = 'x';
+    copyTab[x][y] = gamer;
     setTab([copyTab[0], copyTab[1], copyTab[2]]);
+    if (gamer === Cross) {
+      setGamer(Circle)
+    } else {
+      setGamer(Cross)
+    }
   }
 
   return (
     <View style={styles.container}>
       <Grid tab={tab} onPress={onPress}/>
+      <Text>{"\nÀ qui le tour ?"}</Text>
+      <Text>{gamer}</Text>
     </View>
   );
 }
